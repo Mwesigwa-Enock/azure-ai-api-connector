@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\net8.0\AzureCognitiveIntegration.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\net8.0\AzureCognitiveIntegration.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.AI.FormRecognizer" Version="4.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Logs\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Logs\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Logs\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Logs\**" />
+    </ItemGroup>
+
+</Project>
