@@ -13,8 +13,6 @@ namespace AzureCognitiveIntegration.Features.DocumentAnalysis.Services;
 public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IConfiguration configuration)
     : IDocumentAnalysisService
 {
-    
-    
     /// <summary>
     /// GetNationalIdDetails
     /// </summary>
@@ -37,15 +35,15 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
 
         return genericRes;
     }
-    
-    
+
+
     /// <summary>
     /// ExtractNationalIdFrontDetails
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<NationalIdFrontDetails> ExtractNationalIdFrontDetails(IFormFile file)
+    private async Task<NationalIdFrontDetails> ExtractNationalIdFrontDetails(IFormFile file)
     {
         var stream = await GetStreamFromFormFile(file);
         var results = await AnalyzeDocumentAsync(stream);
@@ -62,49 +60,43 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
             throw new NotImplementedException();
         }
 
-        var idFrontData = new NationalIdFrontDetails();
+        var idFrontData = GetNationalIdFrontDetails(results);
         logger.LogInformation("Found {Pages} Pages from the document", pages);
-        foreach (var page in pages)
-        {
-            logger.LogInformation(
-                "Document Page {page} has {lines} line(s), {Words} word(s) and {SelectionMarks} selection mark(s)",
-                page, page.Lines.Count, page.Words.Count, page.SelectionMarks.Count);
-
-            var line1 = page.Lines[3];
-            var line2 = page.Lines[5];
-            var line3 = page.Lines[8];
-            var line4 = page.Lines[9];
-            var line5 = page.Lines[11];
-            var line6 = page.Lines[13];
-            var line7 = page.Lines[17];
-
-            idFrontData.Surname = line1.Content;
-            idFrontData.GivenName = line2.Content;
-            idFrontData.Nationality = line4.Content;
-            idFrontData.Sex = line6.Content;
-            idFrontData.Nin = line3.Content;
-            idFrontData.DateOfBirth = line5.Content;
-        }
-
+        
         var serializedData = JsonConvert.SerializeObject(idFrontData);
         logger.LogInformation("Found data : {SerializedData}", serializedData);
         return idFrontData;
     }
 
- 
+
     /// <summary>
     /// ExtractNationalIdBackDetails
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public async Task<NationalIdBackDetails> ExtractNationalIdBackDetails(IFormFile file)
+    private async Task<NationalIdBackDetails> ExtractNationalIdBackDetails(IFormFile file)
     {
         var stream = await GetStreamFromFormFile(file);
         var results = await AnalyzeDocumentAsync(stream);
+        foreach (var kvp in results.KeyValuePairs)
+        {
+            logger.LogInformation("Found Key:  {Key} with value:  {Value}", kvp.Key, kvp.Value.Content);
+        }
+        var pages = results.Pages;
+        if (pages.Count <= 0)
+        {
+            logger.LogWarning("No Pages Found");
+            throw new NotImplementedException();
+        }
 
-        return null;
+        var idBackDetails = GetNationalIdBackDetails(results);
+        logger.LogInformation("Found {Pages} Pages from the document", pages);
+        
+        var serializedData = JsonConvert.SerializeObject(idBackDetails);
+        logger.LogInformation("Found data : {SerializedData}", serializedData);
+        return idBackDetails;
     }
-    
+
     /// <summary>
     /// AnalyzeDocument
     /// </summary>
@@ -132,5 +124,91 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
         await file.CopyToAsync(memoryStream);
         memoryStream.Position = 0;
         return memoryStream;
+    }
+
+
+    private NationalIdFrontDetails GetNationalIdFrontDetails(AnalyzeResult result)
+    {
+        var idFrontData = new NationalIdFrontDetails();
+        foreach (var page in result.Pages)
+        {
+            logger.LogInformation(
+                "Document Page {page} has {lines} line(s), {Words} word(s) and {SelectionMarks} selection mark(s)",
+                page.PageNumber, page.Lines.Count, page.Words.Count, page.SelectionMarks.Count);
+            for (var i = 0; i < page.Lines.Count; i++)
+            {
+                var line = page.Lines[i];
+                logger.LogInformation("Line {Line} has content : {Content}", i, line.Content);
+                switch (line.Content)
+                {
+                    case "SURNAME":
+                        idFrontData.Surname = page.Lines[i + 1].Content;
+                        break;
+                    case "GIVEN NAME":
+                        idFrontData.GivenName = page.Lines[i + 1].Content;
+                        break;
+                    case "NATIONALITY":
+                        idFrontData.Nationality = page.Lines[i + 3].Content;
+                        break;
+                    case "SEX":
+                        idFrontData.Sex = page.Lines[i + 3].Content;
+                        break;
+                    case "DATE OF BIRTH":
+                        idFrontData.DateOfBirth = page.Lines[i + 3].Content;
+                        break;
+                    
+                    case "NIN":
+                        idFrontData.Nin = page.Lines[i + 2].Content;
+                        break;
+                   
+                    case "CARD NO" or "CARD NO.":
+                        idFrontData.CardNo = page.Lines[i + 2].Content;
+                        break;
+                    
+                    case "DATE OF EXPIRY":
+                        idFrontData.DateOfExpiry = page.Lines[i + 1].Content;
+                        break;
+                }
+            }
+        }
+        logger.LogInformation("Found data : {SerializedData}", JsonConvert.SerializeObject(idFrontData));
+        return idFrontData;
+    }
+
+    private NationalIdBackDetails GetNationalIdBackDetails(AnalyzeResult result)
+    {
+        var idBackData = new NationalIdBackDetails();
+        foreach (var page in result.Pages)
+        {
+            logger.LogInformation(
+                "Document Page {page} has {lines} line(s), {Words} word(s) and {SelectionMarks} selection mark(s)",
+                page.PageNumber, page.Lines.Count, page.Words.Count, page.SelectionMarks.Count);
+            
+            for (var i = 0; i < page.Lines.Count; i++)
+            {
+                var line = page.Lines[i];
+                logger.LogInformation("Line {Line} has content : {Content}", i, line.Content);
+
+                switch (line.Content)
+                {
+                    case "VILLAGE:" or "VILLAGE":
+                        idBackData.Village = page.Lines[i + 1].Content;
+                        break;
+                    case "PARISH:" or "PARISH":
+                        idBackData.Parish = page.Lines[i + 1].Content;
+                        break;
+                    case "S.COUNTY:" or "S.COUNTY":
+                        idBackData.SubCounty = page.Lines[i + 1].Content;
+                        break;
+                    case "COUNTY:" or "COUNTY":
+                        idBackData.County = page.Lines[i + 1].Content;
+                        break;
+                    case "DISTRICT:" or "DISTRICT":
+                        idBackData.District = page.Lines[i + 1].Content;
+                        break;
+                }
+            }
+        }
+        return idBackData;
     }
 }
