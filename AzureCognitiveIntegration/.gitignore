@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /Logs/
 AzureCognitiveIntegration.Tests/obj/
+AzureCognitiveIntegration.Tests/bin/
