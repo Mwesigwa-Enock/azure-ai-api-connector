@@ -82,7 +82,6 @@ Once running, test the Cognitive endpoints by sending a POST request to:
 
 ## References
 - [Azure Cognitive Services OCR](https://docs.microsoft.com/azure/cognitive-services/computer-vision/concept-recognizing-text)
-
 - [Azure Computer Vision API](https://docs.microsoft.com/azure/cognitive-services/computer-vision/overview)
-
 - [Vision API Limitations](https://docs.microsoft.com/azure/cognitive-services/computer-vision/faq#limitations)
+- [Azure Face API Request Form - useful for requesting support or raising access issues](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUQjA5SkYzNDM4TkcwQzNEOE1NVEdKUUlRRCQlQCN0PWcu)
