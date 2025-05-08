@@ -24,4 +24,15 @@ public static class ConfigExtensions
     {
         return configuration.GetSection("Cognitive").Get<CognitiveSettings>();
     }
+    
+    
+    /// <summary>
+    /// GetVisionSettings
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static VisionSettings GetVisionSettings(this IConfiguration configuration)
+    {
+        return configuration.GetSection("Vision").Get<VisionSettings>();
+    }
 }

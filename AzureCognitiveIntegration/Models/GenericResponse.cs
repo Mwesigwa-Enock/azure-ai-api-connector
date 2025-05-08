@@ -1,4 +1,4 @@
-namespace AzureCognitiveIntegration.Features.DocumentAnalysis.Models;
+namespace AzureCognitiveIntegration.Models;
 
 /// <summary>
 /// GenericResponse
