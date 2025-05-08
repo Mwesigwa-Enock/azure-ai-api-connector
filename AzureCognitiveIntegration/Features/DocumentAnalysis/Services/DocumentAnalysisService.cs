@@ -3,6 +3,7 @@ using Azure.AI.FormRecognizer.DocumentAnalysis;
 using AzureCognitiveIntegration.Config;
 using AzureCognitiveIntegration.Features.DocumentAnalysis.Models;
 using AzureCognitiveIntegration.Helpers;
+using AzureCognitiveIntegration.Models;
 using Newtonsoft.Json;
 
 namespace AzureCognitiveIntegration.Features.DocumentAnalysis.Services;
@@ -45,7 +46,7 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
     /// <exception cref="NotImplementedException"></exception>
     private async Task<NationalIdFrontDetails> ExtractNationalIdFrontDetails(IFormFile file)
     {
-        var stream = await GetStreamFromFormFile(file);
+        var stream = await StringHelper.GetStreamFromFormFile(file);
         var results = await AnalyzeDocumentAsync(stream);
 
         foreach (var kvp in results.KeyValuePairs)
@@ -76,7 +77,7 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
     /// <returns></returns>
     private async Task<NationalIdBackDetails> ExtractNationalIdBackDetails(IFormFile file)
     {
-        var stream = await GetStreamFromFormFile(file);
+        var stream = await StringHelper.GetStreamFromFormFile(file);
         var results = await AnalyzeDocumentAsync(stream);
         foreach (var kvp in results.KeyValuePairs)
         {
@@ -116,16 +117,6 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
         logger.LogInformation("AnalyzeDocument with DocumentAnalysis Client completed");
         return result;
     }
-
-
-    private static async Task<Stream> GetStreamFromFormFile(IFormFile file)
-    {
-        var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream);
-        memoryStream.Position = 0;
-        return memoryStream;
-    }
-
 
     private NationalIdFrontDetails GetNationalIdFrontDetails(AnalyzeResult result)
     {

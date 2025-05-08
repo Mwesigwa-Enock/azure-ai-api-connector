@@ -1,5 +1,6 @@
 using AzureCognitiveIntegration.Core.Extensions;
 using AzureCognitiveIntegration.Features.DocumentAnalysis.Services;
+using AzureCognitiveIntegration.Features.Vision.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ try
 
     builder.Services.AddControllers();
     builder.Services.AddScoped<IDocumentAnalysisService, DocumentAnalysisService>();
+    builder.Services.AddScoped<IAzureServiceWorker, AzureServiceWorker>();
+    builder.Services.AddScoped<IVisionService, VisionService>();
 
     
     

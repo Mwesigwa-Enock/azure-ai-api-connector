@@ -1,5 +1,6 @@
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using AzureCognitiveIntegration.Features.DocumentAnalysis.Models;
+using AzureCognitiveIntegration.Models;
 
 namespace AzureCognitiveIntegration.Features.DocumentAnalysis.Services;
 
