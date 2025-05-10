@@ -58,7 +58,6 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
         if (pages.Count <= 0)
         {
             logger.LogWarning("No Pages Found");
-            throw new NotImplementedException();
         }
 
         var idFrontData = GetNationalIdFrontDetails(results);
@@ -87,7 +86,6 @@ public class DocumentAnalysisService(ILogger<DocumentAnalysisService> logger, IC
         if (pages.Count <= 0)
         {
             logger.LogWarning("No Pages Found");
-            throw new NotImplementedException();
         }
 
         var idBackDetails = GetNationalIdBackDetails(results);

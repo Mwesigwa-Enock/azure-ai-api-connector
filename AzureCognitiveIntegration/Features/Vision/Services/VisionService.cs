@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using AzureCognitiveIntegration.Config;
 using AzureCognitiveIntegration.Features.Vision.Models;
 using AzureCognitiveIntegration.Helpers;

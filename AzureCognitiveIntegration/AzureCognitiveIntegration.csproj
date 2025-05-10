@@ -41,6 +41,12 @@
 
     <ItemGroup>
       <None Remove="Logs\**" />
+      <None Update="TestImages\Mubiru_ID.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestImages\national-idback.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
